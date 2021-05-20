@@ -14,9 +14,26 @@ class Home extends StatefulWidget {
   _HomeState createState() => _HomeState();
 }
 
-class _HomeState extends State<Home> {
+class _HomeState extends State<Home> with WidgetsBindingObserver {
   final List<Transaction> _transactions = [];
   bool _showChart = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    WidgetsBinding.instance.removeObserver(this);
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    print(state);
+  }
 
   void _addTransaction(String title, double value, DateTime date) {
     final newTransaction = Transaction(
@@ -140,24 +157,27 @@ class _HomeState extends State<Home> {
 class _EmptyList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: LayoutBuilder(builder: (ctx, contraints) {
-        return Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          mainAxisSize: MainAxisSize.max,
-          children: [
-            FittedBox(
-              child: Image.asset(
-                'assets/images/empty_list.png',
-              ),
-            ),
-            Text('Ops... >.<', style: Theme.of(context).textTheme.headline5),
-            SizedBox(height: 10),
-            Text('Sem transações cadastradas',
-                style: Theme.of(context).textTheme.headline6),
-          ],
-        );
-      }),
+    return Column(
+      children: [
+        Expanded(
+          child: LayoutBuilder(builder: (ctx, contraints) {
+            return Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                Image.asset(
+                  'assets/images/empty_list.png',
+                ),
+                Text('Ops... >.<',
+                    style: Theme.of(context).textTheme.headline5),
+                SizedBox(height: 10),
+                Text('Sem transações cadastradas',
+                    style: Theme.of(context).textTheme.headline6),
+              ],
+            );
+          }),
+        ),
+      ],
     );
   }
 }
